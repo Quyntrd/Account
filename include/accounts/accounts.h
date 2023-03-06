@@ -15,32 +15,16 @@ namespace acc {
 		string FSP = "   ";
 		float Balance;
 		float Percents;
-		Account(AccountType type,string FSP, float Balance, float Percents);
+		Account(AccountType type, string FSP, float Balance, float Percents);
 	public:
-		void set_percents(AccountType type, int Balance, float Percents) {
-			this->Balance = Balance;
-			if (this->type == Deposit) {
-				Balance += Balance * Percents / 12;
-			};
-			if (this->type == Credit || Balance < 0) {
-				Balance += (-1) * Balance * Percents / 12;
-			};
-		};
-		float get_per() {
-			return Percents;
-		};
-		float get_b() {
-			return Balance;
-		};
-		void set_b(float Balance) {
-			this->Balance = Balance;
-		};
-		Account() {
-			this->type = Payment;
-			this->FSP = "TDI";
-			this->Balance = 10000;
-			this->Percents = 0;
-		};
+		static Account create_Payment(string fsp, float balance, float percents);
+		static Account create_Deposit(string fsp, float balance, float percents);
+		static Account create_Credit(string fsp, float balance, float percents);
+		float compute_value(float bal, float perc) const;
+		AccountType get_type() const;
+		float get_per() const;
+		float get_bal() const;
+		Account();
 	};
 
 	class AccList {
@@ -51,12 +35,22 @@ namespace acc {
 		int _sizes;
 	public:
 		AccList();
+
 		int size() const;
+
 		Account operator[](int index) const;
-		void add(Account a);
+
+		void add(const Account a);
+
+		void remove(int index);
+
+		void insert(int index, Account a);
+
+		
+
 	};
 
 
 
-	int i_max_balance(const AccList& a, const float x);
+	int i_max_balance(const AccList& a);
 }

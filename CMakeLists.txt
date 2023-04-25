@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(accounts-v1 CXX)
+project(accounts-v2 CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -18,8 +18,8 @@ if(MSVC)
 endif()
 
 # Объявляем библиотеку
-add_library(accounts-v1 SHARED "include/accounts/accounts.h" "src/accounts.cc")
-target_include_directories(accounts-v1 PUBLIC "include")
+add_library(accounts-v2 SHARED "include/accounts/accounts.h" "src/accounts.cc")
+target_include_directories(accounts-v2 PUBLIC "include")
 
 # Подключаем googletest
 include(FetchContent)
@@ -28,5 +28,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Объявляем тесты
-add_executable(accounts-v1-tests "tests/accounts_tests.cc")
-target_link_libraries(accounts-v1-tests accounts-v1 GTest::gtest_main)
+add_executable(accounts-v2-tests "tests/accounts_tests.cc")
+target_link_libraries(accounts-v2-tests accounts-v2 GTest::gtest_main)
+
+add_executable(consoleapplication "console/consoleapplication.cpp")
+target_link_libraries(consoleapplication accounts-v2)

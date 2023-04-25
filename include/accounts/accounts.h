@@ -7,50 +7,71 @@ namespace acc {
 		Deposit,
 		Credit
 	};
+	class Account;
+
+	using AccountPtr = Account*;
 
 	class Account
 	{
 	private:
-		AccountType type;
-		string FSP = "   ";
+		AccountType Type;
+
+		string FSP;
+
 		float Balance;
+
 		float Percents;
-		Account(AccountType type, string FSP, float Balance, float Percents);
+
+		Account(AccountType type, string fsp, float balance, float percents);
+
 	public:
-		static Account create_Payment(string fsp, float balance, float percents);
-		static Account create_Deposit(string fsp, float balance, float percents);
-		static Account create_Credit(string fsp, float balance, float percents);
+		static AccountPtr create_Payment(string fsp, float balance, float percents);
+
+		static AccountPtr create_Deposit(string fsp, float balance, float percents);
+
+		static AccountPtr create_Credit(string fsp, float balance, float percents);
+
 		float compute_value(float bal, float perc) const;
+
 		AccountType get_type() const;
+
+		string get_fsp() const;
+
 		float get_per() const;
+
 		float get_bal() const;
-		Account();
+
+		AccountPtr clone() const;
 	};
+
+	bool operator==(const Account& lhs, const Account& rhs);
+	bool operator!=(const Account& lhs, const Account& rhs);
 
 	class AccList {
-	public:
-		static const int CAP = 10;
 	private:
-		Account _Acc[CAP];
-		int _sizes;
+		AccountPtr* _Acc; // Массив указателей
+		int _size;
 	public:
-		AccList();
-
+		AccList(); //Конструктор по умолчанию
+		AccList(const AccList& other);
 		int size() const;
 
-		Account operator[](int index) const;
+		AccountPtr operator[](int index) const; //Перегрузка оператор квадратных скобок
 
-		void add(const Account a);
+		AccList& operator=(const AccList& rhs);
 
-		void remove(int index);
+		void swap(AccList& other);
 
-		void insert(int index, Account a);
+		void add(AccountPtr a); //Добавление записи
 
-		
+		void remove(int index); //Удаление записи по индексу
 
+		void insert(int index, AccountPtr a); // Вставка записи по индексу	
+
+		~AccList(); // Декструктор
 	};
 
 
 
-	int i_max_balance(const AccList& a);
+	int i_max_balance(const AccList& a); //Поиск записи в массиве по максимольному балансу
 }

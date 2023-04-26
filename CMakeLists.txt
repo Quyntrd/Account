@@ -31,5 +31,5 @@ FetchContent_MakeAvailable(googletest)
 add_executable(accounts-v2-tests "tests/accounts_tests.cc")
 target_link_libraries(accounts-v2-tests accounts-v2 GTest::gtest_main)
 
-add_executable(consoleapplication "console/consoleapplication.cpp")
+add_executable(consoleapplication "src/consoleapplication.cc")
 target_link_libraries(consoleapplication accounts-v2)

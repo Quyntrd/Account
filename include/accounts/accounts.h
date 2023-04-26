@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 using namespace std;
-namespace acc {
+
 	enum AccountType {
 		Payment,
 		Deposit,
@@ -22,9 +22,11 @@ namespace acc {
 
 		float Percents;
 
-		Account(AccountType type, string fsp, float balance, float percents);
+		
 
 	public:
+		Account();
+		Account(AccountType type, string fsp, float balance, float percents);
 		static AccountPtr create_Payment(string fsp, float balance, float percents);
 
 		static AccountPtr create_Deposit(string fsp, float balance, float percents);
@@ -42,6 +44,9 @@ namespace acc {
 		float get_bal() const;
 
 		AccountPtr clone() const;
+
+		friend istream& operator>>(istream& in, Account& item);
+		friend ostream& operator<<(ostream& out, const Account& item);
 	};
 
 	bool operator==(const Account& lhs, const Account& rhs);
@@ -67,6 +72,7 @@ namespace acc {
 		void remove(int index); //Удаление записи по индексу
 
 		void insert(int index, AccountPtr a); // Вставка записи по индексу	
+		void show_all();
 
 		~AccList(); // Декструктор
 	};
@@ -74,4 +80,3 @@ namespace acc {
 
 
 	int i_max_balance(const AccList& a); //Поиск записи в массиве по максимольному балансу
-}

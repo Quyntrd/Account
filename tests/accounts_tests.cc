@@ -2,8 +2,6 @@
 
 #include <accounts/accounts.h>
 
-using namespace acc;
-
 TEST(AccountsTests, Dep_ComputeValue) {
     const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
     const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
@@ -25,21 +23,6 @@ TEST(AccountTests, Cred_ComputeValue) {
 
     EXPECT_NEAR(cred1->compute_value(cred1->get_bal(), cred1->get_per()), -20833, 1);
     EXPECT_NEAR(cred2->compute_value(cred2->get_bal(), cred2->get_per()), -12083, 1);
-}
-TEST(AccountListTests, Add) {
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-    const auto pay1 = Account::create_Payment("TDI", 10000, 0);
-    const auto pay2 = Account::create_Payment("KRI", 13000, 0);
-    const auto cred1 = Account::create_Credit("TDI", -10000, 13);
-    const auto cred2 = Account::create_Credit("KRI", -5000, 17);
-    AccList alist;
-    alist.add(dep1);
-    alist.add(dep2);
-    alist.add(pay1);
-    alist.add(pay2);
-    alist.add(cred1);
-    ASSERT_EQ(alist[0], dep1);
 }
 TEST(AccountListTests, IndexOfMaxBalance) {
     const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);

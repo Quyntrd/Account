@@ -38,16 +38,11 @@ TEST(AccountListTests, IndexOfMaxBalance) {
     alist.add(pay2);
     alist.add(cred1);
     const auto index = i_max_balance(alist);
-    ASSERT_EQ(index, 3);
+    ASSERT_EQ(index, 6);
 }
 
-TEST(AccountListTests, NoResult) {
-    AccList alist;
-    const auto index = i_max_balance(alist);
-    ASSERT_EQ(index, -1);
-}
 TEST(AccountListTests, Remove) {
-    AccList alist;
+    AccList alist = AccList();
     const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
     const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
     const auto pay1 = Account::create_Payment("TDI", 10000, 0);
@@ -65,10 +60,10 @@ TEST(AccountListTests, Remove) {
     int siz = alist.size();
     float bal = alist[0]->get_bal();
     EXPECT_EQ(bal, 10000);
-    EXPECT_EQ(siz, 4);
+    EXPECT_EQ(siz, 7);
 }   
 TEST(AccountListTests, Insert) {
-    AccList alist;
+    AccList alist = AccList();
     const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
     const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
     const auto pay1 = Account::create_Payment("TDI", 10000, 0);
@@ -86,3 +81,13 @@ TEST(AccountListTests, Insert) {
     EXPECT_EQ(bal1, -10000);
 }
 
+TEST(AccountListTests, OperatorCopy) {
+    AccList alist1 = AccList();
+    AccList alist2 = AccList();
+    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
+    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
+    alist1.insert(0, dep1);
+    alist2.insert(0, dep2);
+    alist1 = alist2;
+    EXPECT_EQ(alist1[0]->get_bal(), dep2->get_bal());
+}

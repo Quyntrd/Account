@@ -42,9 +42,8 @@ using namespace std;
 		float get_per() const;
 
 		float get_bal() const;
-
+		void Swap(Account other)noexcept;
 		AccountPtr clone() const;
-
 		friend istream& operator>>(istream& in, Account& item);
 		friend ostream& operator<<(ostream& out, const Account& item);
 	};
@@ -54,29 +53,29 @@ using namespace std;
 
 	class AccList {
 	private:
-		AccountPtr* _Acc; // Массив указателей
+		AccountPtr* _Acc; 
 		int _size;
 	public:
-		AccList(); //Конструктор по умолчанию
+		AccList(); 
 		AccList(const AccList& other);
 		int size() const;
 
-		AccountPtr operator[](int index) const; //Перегрузка оператор квадратных скобок
+		AccountPtr operator[](int index) const;
 
 		AccList& operator=(const AccList& rhs);
 
 		void swap(AccList& other);
 
-		void add(AccountPtr a); //Добавление записи
+		void add(AccountPtr a);
 
-		void remove(int index); //Удаление записи по индексу
+		void remove(int index);
 
-		void insert(int index, AccountPtr a); // Вставка записи по индексу	
+		void insert(int index, AccountPtr a);
 		void show_all();
 
-		~AccList(); // Декструктор
+		~AccList();
 	};
 
 
 
-	int i_max_balance(const AccList& a); //Поиск записи в массиве по максимольному балансу
+	int i_max_balance(const AccList& a); 

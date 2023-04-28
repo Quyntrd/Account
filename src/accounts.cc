@@ -45,7 +45,12 @@ AccountPtr AccList::operator[](const int index) const {
 	return _Acc[index];
 }
 
-
+void Account::Swap(Account other) noexcept {
+	swap(Type, other.Type);
+	swap(FSP, other.FSP);
+	swap(Balance, other.Balance);
+	swap(Percents, other.Percents);
+}
 bool operator==(const Account& lhs, const Account& rhs) { //ѕока не уверен, по какому признаку сравнивать
 	return
 		lhs.get_bal() == rhs.get_bal() &&
@@ -71,8 +76,6 @@ int i_max_balance(const AccList& a) {
 	}
 	return max_i;
 }
-
-
 
 float Account::compute_value(float bal, float perc) const{
 	switch (Type) {
@@ -101,7 +104,7 @@ AccList::AccList(const AccList& other):
 {
 	for (int i = 0; i < _size; ++i) {
 		_Acc[i] = other[i]->clone();
-	}
+	}	
 }
 
 AccList& AccList::operator=(const AccList& rhs) {
@@ -167,16 +170,16 @@ void AccList::insert(int index, AccountPtr a) {
 }
 
 void AccList::show_all() {
-	cout << "Type " << "FSP " << "Balance " << "Percents " << endl;
+	cout << "Index " << "Type " << "FSP " << "Balance " << "Percents " << endl;
 	for (int i = 0; i < _size; i++) {
 		if (_Acc[i]->get_type() == Payment) {
-			cout << "Payment " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal() << " " << _Acc[i]->get_per() << endl;
+			cout << i << "::" << "Payment " << _Acc[i]->get_fsp() << " " << _Acc[i]->get_bal() << " " << _Acc[i]->get_per() << endl;
 		}
 		else if (_Acc[i]->get_type() == Deposit) {
-			cout << "Deposit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
+			cout << i << "::" << "Deposit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
 		}
 		else if (_Acc[i]->get_type() == Credit) {
-			cout << "Credit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
+			cout << i << "::" << "Credit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
 		} 
 	}
 }

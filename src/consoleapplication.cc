@@ -22,9 +22,9 @@ int main() {
 	AccList AL = AccList();
 	shared_ptr<Payment> payment = make_shared<Payment>();
 	shared_ptr<Deposit> deposit = make_shared<Deposit>();
-	shared_ptr<Credit> payment = make_shared<Credit>();
+	shared_ptr<Credit> credit = make_shared<Credit>();
 	int input = -1;
-	int idx;
+	int idx, type;
 	while (input != 6) {
 		menu();
 		cin >> input;
@@ -34,7 +34,22 @@ int main() {
 			AL.show_all();
 			cout << "Insert the index: ";
 			cin >> idx;
-			
+			cout << "Choose type (0 - Payment, 1 - Deposit, 2 - Credit)\n";
+			cin >> type;
+			switch (type) {
+			case 0: 
+				cin >> payment;
+				AL.insert(idx, payment);
+				break;
+			case 1:
+				cin >> deposit;
+				AL.insert(idx, deposit);
+				break;
+			case 2:
+				cin >> credit;
+				AL.insert(idx, credit);
+				break;
+			}
 			break;
 		case 2:
 			system("cls");

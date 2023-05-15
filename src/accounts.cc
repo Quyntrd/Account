@@ -170,11 +170,11 @@ ItemPtr AccList::get_acc_by_i(int index) {
 int AccList::size() {
 	return static_cast<int>(_account.size());
 }
-void AccList::insert(int index, ItemPtr account) {
+void AccList::insert(int index, ItemPtr acc) {
 	if (index < 0 || index > _account.size()) {
 		throw runtime_error("Index out of range.");
 	}
-	_account.insert(_account.begin() + index, account);
+	_account.insert(_account.begin() + index, acc);
 }
 void AccList::erase(int index) {
 	if (index < 0 || index > _account.size()) {

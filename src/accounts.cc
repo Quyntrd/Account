@@ -1,227 +1,224 @@
+#pragma warning(disable:6386)
 #include <accounts/accounts.h>
 #include <stdexcept>
 #include <cassert>
+#include <string>
 #include <iostream>
 using namespace std;
-
-AccountPtr Account::create_Payment(const string fsp, const float balance, const float percents) {
-	return new Account(AccountType::Payment, fsp, balance, percents);
+void Account::set_full_name(string full_name) {
+	this->full_name = full_name;
+}
+void Account::set_balance(float balance) {
+	this->balance = balance;
 }
 
-AccountPtr Account::create_Deposit(const string fsp, const float balance, const float percents) {
-	return new Account(AccountType::Deposit, fsp, balance, percents);
+void Deposit::set_percents(float percents) {
+	this->percents = percents;
 }
-
-AccountPtr Account::create_Credit(const string fsp, const float balance, const float percents) {
-	return new Account(AccountType::Credit, fsp, balance, percents);
+void Credit::set_percents(float percents) {
+	this->percents = percents;
 }
-AccountPtr Account::clone() const {
-	return new Account(Type, FSP, Balance, Percents);
+string Account::get_full_name() const {
+	return full_name;
 }
-Account::Account() {
-	Type = AccountType::Payment;
-	FSP = "KRI";
-	Balance = 10000;
-	Percents = 0;
+float Account::get_balance() const {
+	return balance;
 }
-Account::Account(const AccountType type, const string fsp, const float balance, const float percents): Type(type), FSP(fsp), Balance(balance), Percents(percents){}
-
-AccountType Account::get_type() const {
-	return Type;
+float Deposit::get_percents() const {
+	return percents;
 }
-float Account::get_bal() const {
-	return Balance;
+float Credit::get_percents() const {
+	return percents;
 }
-float Account::get_per() const {
-	return Percents;
+Payment::Payment() {
+	full_name = "default";
+	balance = 0;
 }
-string Account::get_fsp() const {
-	return FSP;
+Deposit::Deposit() {
+	full_name = "default";
+	balance = 0;
+	percents = 0;
 }
-AccountPtr AccList::operator[](const int index) const {
-	if (index < 0 || _size <= index) {
-		throw out_of_range("[AccList::operator[]] Index is out of range");
+Credit::Credit() {
+	full_name = "default";
+	balance = 0;
+	percents = 0;
+}
+Payment::Payment(string full_name, float balance) {
+	this->full_name = full_name;
+	this->balance = balance;
+}
+Deposit::Deposit(string full_name, float balance, float percents) {
+	this->full_name = full_name;
+	this->balance = balance;
+	this->percents = percents;
+}
+Credit::Credit(string full_name, float balance, float percents) {
+	this->full_name = full_name;
+	this->balance = balance;
+	this->percents = percents;
+}
+AccList::AccList() {
+	for (int i = 0; i < 5; ++i) {
+		_account.push_back(make_shared<Payment>());
 	}
-	return _Acc[index];
 }
-
-void Account::Swap(Account other) noexcept {
-	swap(Type, other.Type);
-	swap(FSP, other.FSP);
-	swap(Balance, other.Balance);
-	swap(Percents, other.Percents);
+AccList::AccList(vector<ItemPtr> accounts) {
+	_account = vector<ItemPtr>(accounts.size());
+	for (int i = 0; i < _account.size(); ++i) {
+		this->_account[i] = make_shared<Payment>();
+	}
 }
-bool operator==(const Account& lhs, const Account& rhs) { //ѕока не уверен, по какому признаку сравнивать
-	return
-		lhs.get_bal() == rhs.get_bal() &&
-		lhs.get_fsp() == lhs.get_fsp() &&
-		lhs.get_type() == rhs.get_type() &&
-		lhs.get_per() == lhs.get_per();
+AccList::AccList(const AccList& other) {
+	this->_account = other._account;
 }
-
-bool operator!=(const Account& lhs, const Account& rhs) {
+float Payment::compute_value() const {
+	return balance;
+}
+float Deposit::compute_value() const {
+	float bal = balance + balance * percents / 100 / 12;
+	return bal;
+}
+float Credit::compute_value() const {
+	float bal = balance - balance * percents / 100 / 12;
+	return bal;
+}
+unique_ptr<Account> Payment::clone() const {
+	return make_unique<Payment>(full_name, balance);
+}
+unique_ptr<Account> Deposit::clone() const {
+	return make_unique<Deposit>(full_name, balance, percents);
+}
+unique_ptr<Account> Credit::clone() const {
+	return make_unique<Credit>(full_name, balance, percents);
+}
+void Payment::print(ostream& out) const {
+	out << "Payment " << full_name << ' ' << balance;
+}
+void Deposit::print(ostream& out) const {
+	out << "Deposit " << full_name << ' ' << balance << ' ' << percents;
+}
+void Credit::print(ostream& out) const {
+	out << "Credit " << full_name << ' ' << balance<< ' ' << percents;
+}
+int AccList::find_with_max_balance() {
+	int index = 0;
+	float max_balance = 0;
+	for (int i = 0; i < _account.size(); ++i)
+	{
+		float cur_balance = _account[i]->get_balance();
+		if (cur_balance > max_balance)
+		{
+			index = i;
+			max_balance = cur_balance;
+		}
+	}
+	return index;
+}
+void AccList::Swap(AccList& other) noexcept {
+	swap(_account, other._account);
+}
+bool Payment::equals(shared_ptr<Account> other) const {
+	const auto d_other = dynamic_pointer_cast<Payment>(other);
+	if (d_other == nullptr) {
+		return false;
+	}
+	return (full_name == d_other->full_name && balance == d_other->balance);
+}
+bool Deposit::equals(shared_ptr<Account> other) const {
+	const auto d_other = dynamic_pointer_cast<Deposit>(other);
+	if (d_other == nullptr) {
+		return false;
+	}
+	return (full_name == d_other->full_name && balance == d_other->balance && percents == d_other->percents);
+}
+bool Credit::equals(shared_ptr<Account> other) const {
+	const auto d_other = dynamic_pointer_cast<Credit>(other);
+	if (d_other == nullptr) {
+		return false;
+	}
+	return (full_name == d_other->full_name && balance == d_other->balance && percents == d_other->percents);
+}
+bool operator==(const AccList& lhs, const AccList& rhs) {
+	return ((lhs._account) == (rhs._account));
+}
+bool operator!=(const AccList& lhs, const AccList& rhs) {
 	return !(lhs == rhs);
 }
 
-int i_max_balance(const AccList& a) {
-	int max_i = -1;
-	float max_balance = 0;
-	const auto n = a.size();
-	for (int i = 0; i < n; i++) {
-		const auto bal = a[i]->get_bal();
-		if (max_i == -1 || max_balance < bal) {
-			max_i = i;
-			max_balance = bal;
-		}
-	}
-	return max_i;
-}
-
-float Account::compute_value(float bal, float perc) const{
-	switch (Type) {
-	case AccountType::Deposit:
-		return bal + (bal * perc / 12);
-	case AccountType::Credit:
-		return -(-bal + (-bal * perc / 12));
-	case AccountType::Payment:
-		return bal;
-	default:
-		throw runtime_error("[Account::set_percents] Invalid function type");
-	}
-}
-
-AccList::AccList()
-{
-	this->_size = 3;
-	_Acc = new Account * [_size];
-	for (int i = 0; i < _size; ++i) {
-		_Acc[i] = new Account();
-	}
-}
-
-AccList::AccList(const AccList& other):
-	_Acc(new AccountPtr[other._size]), _size(other._size)
-{
-	for (int i = 0; i < _size; ++i) {
-		_Acc[i] = other[i]->clone();
-	}	
-}
-
-AccList& AccList::operator=(const AccList& rhs) {
-	AccList copy(rhs);
-	copy.swap(*this);
+AccList& AccList::operator=(AccList other) {
+	Swap(other);
 	return *this;
 }
-
-int AccList::size() const {
-	return _size;
+ItemPtr AccList::operator[](int index) const {
+	if (index < 0 || index >= _account.size())
+	{
+		throw runtime_error("Index out of range.");
+	}
+	return _account[index];
+}
+ItemPtr& AccList::operator[](int index) {
+	if (index < 0 || index >= _account.size())
+	{
+		throw runtime_error("Index out of range.");
+	}
+	return _account[index];
+}
+ItemPtr AccList::get_acc_by_i(int index) {
+	return _account[index];
+}
+int AccList::size() {
+	return static_cast<int>(_account.size());
+}
+void AccList::insert(int index, ItemPtr account) {
+	if (index < 0 || index > _account.size()) {
+		throw runtime_error("Index out of range.");
+	}
+	_account.insert(_account.begin() + index, account);
+}
+void AccList::erase(int index) {
+	if (index < 0 || index > _account.size()) {
+		throw runtime_error("List is empty.");
+	}
+	_account.erase(_account.begin() + index);
+}
+void AccList::clear() {
+	_account.clear();
 }
 
-void AccList::swap(AccList& other) {
-	std::swap(this->_Acc, other._Acc);
-	std::swap(this->_size, other._size);
+istream& operator>>(istream& in, shared_ptr<Payment>& item) {
+	cout << "Enter full name:\n";
+	in >> item->full_name;
+	cout << "Enter balance:\n";
+	in >> item->balance;
+	return in;
 }
-AccList::~AccList() {
-	for (int i = 0; i < _size; i++) {
-		delete _Acc[i];
-	}
-	delete[] _Acc;
+istream& operator>>(istream& in, shared_ptr<Deposit>& item) {
+	cout << "Enter full name:\n";
+	in >> item->full_name;
+	cout << "Enter balance:\n";
+	in >> item->balance;
+	cout << "Enter percents:\n";
+	in >> item->percents;
+	return in;
 }
-
-void AccList::add(AccountPtr const a) {
-	auto new_accs = new AccountPtr[_size + 1];
-
-	for (int i = 0; i < _size; ++i) {
-		new_accs[i] = _Acc[i];
-	}
-	new_accs[_size] = a;
-	
-	delete[] _Acc;
-	_Acc = new_accs;
-	++_size;
+istream& operator>>(istream& in, shared_ptr<Credit>& item) {
+	cout << "Enter full name:\n";
+	in >> item->full_name;
+	cout << "Enter balance:\n";
+	in >> item->balance;
+	cout << "Enter percents:\n";
+	in >> item->percents;
+	return in;
 }
-
-void AccList::remove(int index) {
-	for (int i = index; i < _size; i++) {
-		_Acc[i] = _Acc[i + 1];
-	}
-	--_size;
+void AccList::print_current(int index) {
+	_account[index]->print(cout);
 }
-
-void AccList::insert(int index, AccountPtr a) {
-	auto new_accs = new AccountPtr[_size + 1];
-	
-	if (index < 0 || index >= _size) {
-		throw std::runtime_error("Index out of range");
-	}
-	new_accs[index] = a;
-	for (int i = 0; i < index; ++i) {
-		new_accs[i] = _Acc[i];
-	}
-	
-	for (int i = _size; i > index; --i) {
-		new_accs[i] = _Acc[i - 1];
-	}
-	
-
-	delete[] _Acc;
-	_Acc = new_accs;
-	++_size;
-}
-
 void AccList::show_all() {
-	cout << "Index " << "Type " << "FSP " << "Balance " << "Percents " << endl;
-	for (int i = 0; i < _size; i++) {
-		if (_Acc[i]->get_type() == Payment) {
-			cout << i << "::" << "Payment " << _Acc[i]->get_fsp() << " " << _Acc[i]->get_bal() << " " << _Acc[i]->get_per() << endl;
-		}
-		else if (_Acc[i]->get_type() == Deposit) {
-			cout << i << "::" << "Deposit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
-		}
-		else if (_Acc[i]->get_type() == Credit) {
-			cout << i << "::" << "Credit " << _Acc[i]->get_fsp()<< " " << _Acc[i]->get_bal()<< " " << _Acc[i]->get_per() << endl;
-		} 
-	}
-}
-istream& operator>>(std::istream& in, AccountType& item_type) {
-	int type;
-	in >> type;
-	switch (type) {
-	case 0:
-		item_type = Deposit;
-		break;
-	case 1:
-		item_type = Payment;
-		break;
-	case 2:
-		item_type = Credit;
-		break;
-	default:
-		throw std::runtime_error("Wrong type exception");
-
-	}
-	return in;
-}
-
-istream& operator>>(istream& in, Account& item) {
-	cout << "Choose your account:\n 0 - Deposit\n 1 - Payment \n 2 - Credit\n";
-	in >> item.Type;
-	cout << "Enter Full Name:\n";
-	in >> item.FSP;
-	cout << "Enter Balance:\n";
-	in >> item.Balance;
-	cout << "Enter Percents:\n";
-	in >> item.Percents;
-	return in;
-}
-ostream& operator<<(ostream& out, const Account& other) {
-	if (other.Type == Deposit) {
-		return out << "Account(" << "Account Type: Deposit" << "Full name: " << other.FSP << "Balance: " << other.Balance << "Percents: " << other.Percents << ")";
-	}
-	else if (other.Type == Payment) {
-		return out << "Account(" << "Account Type: Payment" << "Full name: " << other.FSP << "Balance: " << other.Balance << "Percents: " << other.Percents << ")";
-	}
-	else if (other.Type == Credit) {
-		return out << "Account(" << "Account Type: Credit" << "Full name: " << other.FSP << "Balance: " << other.Balance << "Percents: " << other.Percents << ")";
+	cout << "Current list:\n";
+	for (int i = 0; i < _account.size(); ++i) {
+		cout << i << ':';
+		print_current(i);
+		cout << endl;
 	}
 }

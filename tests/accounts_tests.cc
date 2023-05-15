@@ -2,92 +2,79 @@
 
 #include <accounts/accounts.h>
 
-TEST(AccountsTests, Dep_ComputeValue) {
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-
-    EXPECT_NEAR(dep1->compute_value(dep1->get_bal(), dep1->get_per()), 16250, 1);
-    EXPECT_NEAR(dep2->compute_value(dep2->get_bal(), dep2->get_per()), 21467, 1);
+TEST(AccountTests, AccountConstructorTest) {
+	Payment acc1 = Payment("Vladimir Zhirinovsky", 100000);
+	EXPECT_EQ(acc1.get_full_name(), "Vladimir Zhirinovsky");
 }
-
-TEST(AccountTests, Pay_ComputeValue) {
-    const auto pay1 = Account::create_Payment("TDI", 10000, 0);
-    const auto pay2 = Account::create_Payment("KRI", 13000, 0);
-
-    EXPECT_EQ(pay1->compute_value(pay1->get_bal(), pay1->get_per()), 10000);
-    EXPECT_EQ(pay2->compute_value(pay2->get_bal(), pay2->get_per()), 13000);
+TEST(AccountTests, AccountConstructorTest2) {
+	Payment acc1 = Payment("Vladimir Zhirinovsky", 100000);
+	EXPECT_EQ(acc1.get_balance(), 100000);
 }
-TEST(AccountTests, Cred_ComputeValue) {
-    const auto cred1 = Account::create_Credit("TDI", -10000, 13);
-    const auto cred2 = Account::create_Credit("KRI", -5000, 17);
-
-    EXPECT_NEAR(cred1->compute_value(cred1->get_bal(), cred1->get_per()), -20833, 1);
-    EXPECT_NEAR(cred2->compute_value(cred2->get_bal(), cred2->get_per()), -12083, 1);
+TEST(AccountTests, AccountConstructorTest3) {
+	Deposit acc1 = Deposit("Vitaliy Cal", 100000, 13);
+	EXPECT_EQ(acc1.get_full_name(), "Vitaliy Cal");
 }
-TEST(AccountListTests, IndexOfMaxBalance) {
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-    const auto pay1 = Account::create_Payment("TDI", 10000, 0);
-    const auto pay2 = Account::create_Payment("KRI", 13000, 0);
-    const auto cred1 = Account::create_Credit("TDI", -10000, 13);
-    const auto cred2 = Account::create_Credit("KRI", -5000, 17);
-    AccList alist;
-    alist.add(dep1);
-    alist.add(dep2);
-    alist.add(pay1);
-    alist.add(pay2);
-    alist.add(cred1);
-    const auto index = i_max_balance(alist);
-    ASSERT_EQ(index, 6);
+TEST(AccountTests, AccountConstructorTest4) {
+	Deposit acc1 = Deposit("Vitaliy Cal", 100000, 13);
+	EXPECT_EQ(acc1.get_balance(), 100000);
 }
-
-TEST(AccountListTests, Remove) {
-    AccList alist = AccList();
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-    const auto pay1 = Account::create_Payment("TDI", 10000, 0);
-    const auto pay2 = Account::create_Payment("KRI", 13000, 0);
-    const auto cred1 = Account::create_Credit("TDI", -10000, 13);
-    const auto cred2 = Account::create_Credit("KRI", -5000, 17);
-    alist.add(dep1);
-    alist.add(dep2);
-    alist.add(pay1);
-    alist.add(pay2);
-    alist.add(cred1);
-    alist.add(cred2);
-    alist.remove(0);
-    alist.remove(0);
-    int siz = alist.size();
-    float bal = alist[0]->get_bal();
-    EXPECT_EQ(bal, 10000);
-    EXPECT_EQ(siz, 7);
-}   
-TEST(AccountListTests, Insert) {
-    AccList alist = AccList();
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-    const auto pay1 = Account::create_Payment("TDI", 10000, 0);
-    const auto pay2 = Account::create_Payment("KRI", 13000, 0);
-    const auto cred1 = Account::create_Credit("TDI", -10000, 13);
-    const auto cred2 = Account::create_Credit("KRI", -5000, 17);
-    alist.insert(0, dep1);
-    alist.insert(1, dep2);
-    alist.insert(2, pay1);
-    alist.insert(3, pay2);
-    alist.insert(4, cred1);
-    float bal = alist[3]->get_bal();
-    float bal1 = alist[4]->get_bal();
-    EXPECT_EQ(bal, 13000);
-    EXPECT_EQ(bal1, -10000);
+TEST(AccountTests, AccountConstructorTest5) {
+	Deposit acc1 = Deposit("Vitaliy Cal", 100000, 13);
+	EXPECT_EQ(acc1.get_percents(), 13);
 }
-
-TEST(AccountListTests, OperatorCopy) {
-    AccList alist1 = AccList();
-    AccList alist2 = AccList();
-    const auto dep1 = Account::create_Deposit("TDI", 10000, 7.5);
-    const auto dep2 = Account::create_Deposit("KRI", 11200, 11);
-    alist1.insert(0, dep1);
-    alist2.insert(0, dep2);
-    alist1 = alist2;
-    EXPECT_EQ(alist1[0]->get_bal(), dep2->get_bal());
+TEST(AccountTests, AccountConstructorTest6) {
+	Credit acc1 = Credit("Daniil Terebilkin", 12345, 14);
+	EXPECT_EQ(acc1.get_full_name(), "Daniil Terebilkin");
+}
+TEST(AccountTests, AccountConstructorTest7) {
+	Credit acc1 = Credit("Daniil Terebilkin", 12345, 14);
+	EXPECT_EQ(acc1.get_balance(), 12345);
+}
+TEST(AccountTests, AccountConstructorTest8) {
+	Credit acc1 = Credit("Daniil Terebilkin", 12345, 14);
+	EXPECT_EQ(acc1.get_percents(), 14);
+}
+TEST(AccountTest, AccountComputeValue) {
+	Payment acc1 = Payment("Vladimir Zhirinovsky", 100000);
+	EXPECT_EQ(acc1.compute_value(), 100000);
+}
+TEST(AccountTest, AccountComputeValue1) {
+	Deposit acc1 = Deposit("Vitaliy Cal", 100000, 13);
+	EXPECT_NEAR(acc1.compute_value(), 101083, 1);
+}
+TEST(AccountTest, AccountComputeValue2) {
+	Credit acc1 = Credit("Daniil Terebilkin", 12345, 14);
+	EXPECT_NEAR(acc1.compute_value(), 12200, 1);
+}
+TEST(AccountListTest, AccountListErase) {
+	AccList AL = AccList();
+	AL.erase(0);
+	EXPECT_EQ(AL.size(), 4);
+	EXPECT_EQ(AL[0]->compute_value(), 0);
+}
+TEST(AccountListTest, AccountListClear) {
+	AccList AL = AccList();
+	AL.clear();
+	EXPECT_EQ(AL.size(), 0);
+}
+TEST(AccountListTest, AccountListMaxBal) {
+	AccList AL;
+	AL.insert(0, make_shared<Payment>("Vladimir Zhirinovsky", 100000));
+	AL.insert(1, make_shared<Payment>("Vladimir Zhirinovsky", 100000));
+	AL.insert(2, make_shared<Deposit>("Vitaliy Cal", 10000, 13));
+	AL.insert(3, make_shared<Deposit>("Vitaliy Cal", 10000, 13));
+	AL.insert(4, make_shared<Payment>("Vladimir Zhirinovsky", 100000));
+	EXPECT_EQ(AL.find_with_max_balance(), 0);
+}
+TEST(ExceptionTest, ExceptionIndexOut) {
+	AccList AL = AccList();
+	EXPECT_THROW(AL[-1]->compute_value(), std::runtime_error);
+	EXPECT_THROW(AL[10]->compute_value(), std::runtime_error);
+}
+TEST(ExceptionTest, ExceptionEmptyTest) {
+	AccList AL = AccList();
+	for (int i = 0; i < 5; ++i) {
+		AL.erase(0);
+	}
+	EXPECT_THROW(AL.erase(1), std::runtime_error);
 }

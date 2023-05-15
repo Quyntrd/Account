@@ -19,8 +19,10 @@ void menu() {
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleCP(1251);
-	AccList Accs = AccList();
-	Account item = Account();
+	AccList AL = AccList();
+	shared_ptr<Payment> payment = make_shared<Payment>();
+	shared_ptr<Deposit> deposit = make_shared<Deposit>();
+	shared_ptr<Credit> payment = make_shared<Credit>();
 	int input = -1;
 	int idx;
 	while (input != 6) {
@@ -29,36 +31,34 @@ int main() {
 		switch (input) {
 		case 1:
 			system("cls");
-			Accs.show_all();
+			AL.show_all();
 			cout << "Insert the index: ";
 			cin >> idx;
-			cin >> item;
-			Accs.insert(idx, &item);
+			
 			break;
 		case 2:
 			system("cls");
-			Accs.show_all();
+			AL.show_all();
 			cout << "Insert the index: ";
 			cin >> idx;
-			Accs.remove(idx);
+			AL.erase(idx);
 			break;
 		case 3:
 			system("cls");
-			Accs.show_all();
+			AL.show_all();
 			break;
 		case 4:
 			system("cls");
-			Accs.show_all();
-			idx = i_max_balance(Accs);
+			AL.show_all();
+			idx = AL.find_with_max_balance();
 			cout << "Index of max balance: " << idx << endl;
 			break;
 		case 5: 
 			system("cls");
-			Accs.show_all();
+			AL.show_all();
 			cout << "Insert the index: ";
 			cin >> idx;
-			Account* a = Accs[idx];
-			int b = a->compute_value(a->get_bal(), a->get_per());
+			int b = AL[idx]->compute_value();
 			cout << "Computed value: " << b << endl;
 		}
 		if (input != 6)
